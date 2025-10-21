@@ -32,16 +32,20 @@ const analyzeRecord = async (req, res) => {
     // Gunakan model Gemini 1.5 Pro
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
 
+    // 🧠 Prompt lengkap versi terbaru
     const prompt = `
-Anda adalah asisten medis AI profesional. 
-Analisis teks rekam medis berikut ini secara mendalam, ringkas, dan jelas.
+Anda adalah asisten medis AI profesional.  
+Analisis teks rekam medis berikut ini secara mendalam, ringkas, dan jelas.  
+Tambahkan juga rekomendasi makanan yang dapat dikonsumsi berdasarkan kondisi pasien.  
+Hasil analisis harus mencakup identitas pasien, ringkasan diagnosis, data medis utama, daftar obat (jika ada), rekomendasi umum, serta daftar makanan yang disarankan dalam setiap waktu makan.  
+Keluarkan hasil **DALAM FORMAT JSON VALID** tanpa teks tambahan di luar objek JSON.
 
 Teks Rekam Medis:
 """
 ${pdfText}
 """
 
-Keluarkan hasil DALAM FORMAT JSON VALID dengan struktur:
+Struktur JSON:
 {
   "patient_name": "...",
   "diagnosis_summary": "...",
@@ -53,19 +57,23 @@ Keluarkan hasil DALAM FORMAT JSON VALID dengan struktur:
   "medications": [
     { "name": "...", "dosage": "..." }
   ],
-  "recommendations": "..."
+  "recommendations": "...",
+  "food_recommendations": [
+    { "category": "Sarapan", "items": ["..."] },
+    { "category": "Makan Siang", "items": ["..."] },
+    { "category": "Makan Malam", "items": ["..."] },
+    { "category": "Camilan", "items": ["..."] }
+  ]
 }
-Pastikan tidak ada teks tambahan di luar objek JSON.
 `;
 
     // Panggil Gemini
     const result = await model.generateContent(prompt);
     let responseText = result.response.text().trim();
 
-    // ✅ Tambahkan fallback JSON agar tidak error bila output AI berantakan
+    // ✅ Tangani jika output bukan JSON valid
     let analysisResult;
     try {
-      // Bersihkan jika AI mengirim teks di luar JSON
       const jsonStart = responseText.indexOf("{");
       const jsonEnd = responseText.lastIndexOf("}");
       if (jsonStart !== -1 && jsonEnd !== -1) {
@@ -79,7 +87,8 @@ Pastikan tidak ada teks tambahan di luar objek JSON.
         diagnosis_summary: "Tidak dapat dianalisis (format tidak valid)",
         key_metrics: [],
         medications: [],
-        recommendations: "Periksa ulang file PDF atau ulangi analisis."
+        recommendations: "Periksa ulang file PDF atau ulangi analisis.",
+        food_recommendations: []
       };
     }
 
