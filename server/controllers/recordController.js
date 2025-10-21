@@ -1,53 +1,65 @@
 // server/controllers/recordController.js
-// MENGGUNAKAN pdfreader DAN PROMPT BARU
+// ✅ VERSI STABIL (fix model Gemini & parsing JSON)
+console.log("--- KODE ANALISIS PDF (STABIL) SEDANG BERJALAN ---");
 
-console.log("--- KODE ANALISIS PDF (DENGAN pdfreader & PROMPT BARU) SEDANG BERJALAN ---");
+const fs = require("fs");
+const { pool } = require("../config/db");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { PdfReader } = require("pdfreader");
 
-const fs = require('fs');
-const { pool } = require('../config/db');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const { PdfReader } = require("pdfreader"); // Import pdfreader
-
+// Inisialisasi Gemini
+if (!process.env.GEMINI_API_KEY) {
+  console.error("❌ GEMINI_API_KEY tidak ditemukan di .env");
+  process.exit(1);
+}
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Fungsi hapus file sementara
 function cleanupFile(filePath) {
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
+  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 }
 
+// Fungsi ekstraksi teks PDF (pakai pdfreader)
+async function extractTextFromPdf(filePath) {
+  return new Promise((resolve, reject) => {
+    let text = "";
+    new PdfReader().parseFileItems(filePath, (err, item) => {
+      if (err) reject(err);
+      else if (!item) resolve(text);
+      else if (item.text) text += item.text + " ";
+    });
+  });
+}
+
+// =====================================================
+// 1️⃣ ANALISIS PDF
+// =====================================================
 const analyzeRecord = async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'File PDF rekam medis harus diunggah' });
+    return res.status(400).json({ message: "File PDF rekam medis harus diunggah" });
   }
 
   const pdfPath = req.file.path;
 
   try {
-    // Ekstrak teks menggunakan pdfreader
-    const pdfText = await new Promise((resolve, reject) => {
-      let extractedText = "";
-      new PdfReader().parseFileItems(pdfPath, (err, item) => {
-        if (err) {
-          console.error("Error parsing PDF:", err);
-          reject(new Error("Gagal mem-parsing file PDF"));
-        } else if (!item) {
-          console.log("Ekstraksi teks PDF selesai.");
-          resolve(extractedText);
-        } else if (item.text) {
-          extractedText += item.text + " ";
-        }
-      });
-    });
-
+    // --- Ekstrak teks dari PDF ---
+    const pdfText = await extractTextFromPdf(pdfPath);
     if (!pdfText.trim()) {
-       throw new Error("Tidak ada teks yang dapat diekstrak dari PDF.");
+      throw new Error("Tidak ada teks yang dapat diekstrak dari PDF.");
+    }
+    console.log("✅ Teks berhasil diekstrak:", pdfText.slice(0, 200), "...");
+
+    // --- Pilih model Gemini yang stabil ---
+    let model;
+    try {
+      model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      console.log("✅ Model gemini-2.5-flash tersedia");
+    } catch (err) {
+      console.warn("⚠️ Model gemini-1.5-pro tidak tersedia, fallback ke gemini-pro");
+      model = genAI.getGenerativeModel({ model: "gemini-pro" });
     }
 
-    // Siapkan model AI
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
-
-    // --- 👇 PROMPT BARU DARI ANDA 👇 ---
+    // --- Prompt final ---
     const prompt = `
 Anda adalah asisten medis AI profesional.
 Analisis teks rekam medis berikut ini secara mendalam, ringkas, dan jelas.
@@ -81,69 +93,86 @@ Struktur JSON:
   ]
 }
 `;
-    // --- 👆 AKHIR PROMPT BARU 👆 ---
 
-    // Kirim prompt ke Gemini
+    console.log("📤 Mengirim ke Gemini...");
     const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    const analysisResult = JSON.parse(responseText); // Parse respons JSON
+    let responseText = result.response.text().trim();
+    console.log("📥 Respons AI diterima (preview):", responseText.slice(0, 200));
 
-    // Simpan ke Database
-    const userId = req.user.id;
+    // --- Parsing JSON dengan perlindungan ---
+    let analysisResult;
+    try {
+      const jsonStart = responseText.indexOf("{");
+      const jsonEnd = responseText.lastIndexOf("}");
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        responseText = responseText.slice(jsonStart, jsonEnd + 1);
+      }
+      analysisResult = JSON.parse(responseText);
+    } catch (err) {
+      console.error("⚠️ Respons AI bukan JSON valid. Gunakan fallback default.");
+      analysisResult = {
+        patient_name: "Tidak ditemukan",
+        diagnosis_summary: "Tidak dapat dianalisis (format tidak valid)",
+        key_metrics: [],
+        medications: [],
+        recommendations: "Periksa ulang file PDF atau ulangi analisis.",
+        food_recommendations: [],
+      };
+    }
+
+    // --- Simpan ke database ---
+    const userId = req.user?.id || 0; // fallback 0 kalau tidak ada user login
     const fileName = req.file.filename;
     await pool.query(
-      'INSERT INTO medical_analyses (user_id, file_name, analysis_summary) VALUES (?, ?, ?)',
+      "INSERT INTO medical_analyses (user_id, file_name, analysis_summary) VALUES (?, ?, ?)",
       [userId, fileName, JSON.stringify(analysisResult)]
     );
 
-    // Kirim respons sukses
+    console.log("✅ Data berhasil disimpan ke database.");
     res.status(200).json({
       message: "Analisis PDF berhasil",
-      data: analysisResult
+      data: analysisResult,
     });
-
   } catch (error) {
-    console.error("Error saat analisis PDF:", error);
-    if (error instanceof SyntaxError) {
-       console.error("Error: Respons AI bukan JSON yang valid.");
-       return res.status(500).json({ message: "Gagal mem-parsing respons AI. Coba lagi." });
-    }
+    console.error("❌ Error saat analisis PDF:", error);
     if (error.message.includes("Tidak ada teks")) {
-       return res.status(400).json({ message: error.message });
-    }
-    if (error.message.includes("Gagal mem-parsing")) {
-       return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: error.message });
     }
     res.status(500).json({ message: "Gagal menganalisis PDF" });
-
   } finally {
-     cleanupFile(pdfPath);
+    cleanupFile(pdfPath);
   }
 };
 
-// Fungsi getRecordHistory tetap sama
+// =====================================================
+// 2️⃣ AMBIL RIWAYAT ANALISIS
+// =====================================================
 const getRecordHistory = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id || 0;
     const query = `
-      SELECT
-        id, file_name, analysis_summary, created_at
+      SELECT id, file_name, analysis_summary, created_at
       FROM medical_analyses
-      WHERE user_id = ? ORDER BY created_at DESC LIMIT 10;
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT 10;
     `;
     const [history] = await pool.query(query, [userId]);
-    const parsedHistory = history.map(item => ({
+    const parsedHistory = history.map((item) => ({
       ...item,
-      analysis_summary: JSON.parse(item.analysis_summary)
+      analysis_summary: JSON.parse(item.analysis_summary),
     }));
     res.status(200).json(parsedHistory);
   } catch (error) {
-    console.error("Error saat mengambil riwayat rekam medis:", error);
+    console.error("❌ Error saat mengambil riwayat rekam medis:", error);
     res.status(500).json({ message: "Gagal mengambil riwayat rekam medis" });
   }
 };
 
+// =====================================================
+// 3️⃣ EXPORT SEMUA
+// =====================================================
 module.exports = {
   analyzeRecord,
-  getRecordHistory
+  getRecordHistory,
 };
