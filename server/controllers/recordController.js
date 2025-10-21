@@ -26,7 +26,7 @@ const analyzeRecord = async (req, res) => {
   try {
     // Ekstrak teks dari PDF
     const dataBuffer = fs.readFileSync(pdfPath);
-    const pdfData = await pdf(dataBuffer);
+    const pdfData = await (pdf.default || pdf)(dataBuffer);
     const pdfText = pdfData.text;
 
     // Gunakan model Gemini 1.5 Pro
