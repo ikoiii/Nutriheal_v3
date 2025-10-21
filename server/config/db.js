@@ -11,12 +11,11 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Fungsi untuk menguji koneksi
 async function testConnection() {
   try {
     const connection = await pool.getConnection();
     console.log('🎉 Berhasil terhubung ke database MySQL!');
-    connection.release(); // Melepaskan koneksi kembali ke pool
+    connection.release(); 
   } catch (error) {
     console.error('❌ Gagal terhubung ke database:', error.message);
   }

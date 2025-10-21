@@ -1,5 +1,3 @@
-// server/controllers/recordController.js
-// ✅ VERSI STABIL (fix model Gemini & parsing JSON)
 console.log("--- KODE ANALISIS PDF (STABIL) SEDANG BERJALAN ---");
 
 const fs = require("fs");
@@ -7,19 +5,16 @@ const { pool } = require("../config/db");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { PdfReader } = require("pdfreader");
 
-// Inisialisasi Gemini
 if (!process.env.GEMINI_API_KEY) {
   console.error("❌ GEMINI_API_KEY tidak ditemukan di .env");
   process.exit(1);
 }
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Fungsi hapus file sementara
 function cleanupFile(filePath) {
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 }
 
-// Fungsi ekstraksi teks PDF (pakai pdfreader)
 async function extractTextFromPdf(filePath) {
   return new Promise((resolve, reject) => {
     let text = "";
@@ -31,9 +26,6 @@ async function extractTextFromPdf(filePath) {
   });
 }
 
-// =====================================================
-// 1️⃣ ANALISIS PDF
-// =====================================================
 const analyzeRecord = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "File PDF rekam medis harus diunggah" });
@@ -42,14 +34,14 @@ const analyzeRecord = async (req, res) => {
   const pdfPath = req.file.path;
 
   try {
-    // --- Ekstrak teks dari PDF ---
+  
     const pdfText = await extractTextFromPdf(pdfPath);
     if (!pdfText.trim()) {
       throw new Error("Tidak ada teks yang dapat diekstrak dari PDF.");
     }
     console.log("✅ Teks berhasil diekstrak:", pdfText.slice(0, 200), "...");
 
-    // --- Pilih model Gemini yang stabil ---
+    
     let model;
     try {
       model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -99,7 +91,6 @@ Struktur JSON:
     let responseText = result.response.text().trim();
     console.log("📥 Respons AI diterima (preview):", responseText.slice(0, 200));
 
-    // --- Parsing JSON dengan perlindungan ---
     let analysisResult;
     try {
       const jsonStart = responseText.indexOf("{");
@@ -120,8 +111,7 @@ Struktur JSON:
       };
     }
 
-    // --- Simpan ke database ---
-    const userId = req.user?.id || 0; // fallback 0 kalau tidak ada user login
+    const userId = req.user?.id || 0; 
     const fileName = req.file.filename;
     await pool.query(
       "INSERT INTO medical_analyses (user_id, file_name, analysis_summary) VALUES (?, ?, ?)",
@@ -144,9 +134,6 @@ Struktur JSON:
   }
 };
 
-// =====================================================
-// 2️⃣ AMBIL RIWAYAT ANALISIS
-// =====================================================
 const getRecordHistory = async (req, res) => {
   try {
     const userId = req.user?.id || 0;
@@ -169,9 +156,6 @@ const getRecordHistory = async (req, res) => {
   }
 };
 
-// =====================================================
-// 3️⃣ EXPORT SEMUA
-// =====================================================
 module.exports = {
   analyzeRecord,
   getRecordHistory,
