@@ -1,23 +1,17 @@
-// src/pages/SignupPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const SignupPage = () => {
-  // State untuk menyimpan data form
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   });
 
-  // State untuk pesan error
   const [error, setError] = useState(null);
-
-  // Hook untuk navigasi setelah berhasil mendaftar
   const navigate = useNavigate();
 
-  // Fungsi untuk meng-handle perubahan input
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -25,21 +19,19 @@ const SignupPage = () => {
     });
   };
 
-  // Fungsi untuk meng-handle submit form
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Mencegah reload halaman
-    setError(null); // Bersihkan error sebelumnya
+    e.preventDefault();
+    setError(null);
 
     try {
-      // Kirim data ke backend
+      
       await axios.post('http://localhost:5000/api/auth/register', formData);
 
-      // Jika berhasil:
       alert('Registrasi berhasil! Silakan login.');
-      navigate('/login'); // Arahkan ke halaman login
+      navigate('/login');
 
     } catch (err) {
-      // Jika gagal:
+
       console.error('Error saat registrasi:', err.response?.data?.message || err.message);
       setError(err.response?.data?.message || 'Registrasi gagal. Coba lagi.');
     }

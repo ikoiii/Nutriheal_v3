@@ -1,4 +1,3 @@
-// src/pages/LandingPage.jsx
 import React from 'react';
 
 const LandingPage = () => {

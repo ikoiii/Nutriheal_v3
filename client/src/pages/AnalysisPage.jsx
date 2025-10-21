@@ -4,20 +4,19 @@ import { useLocation, Link, Navigate } from 'react-router-dom';
 const AnalysisPage = () => {
   const location = useLocation();
   
-  // Jika halaman diakses tanpa data, kembalikan ke upload
   if (!location.state || !location.state.result) {
     return <Navigate to="/upload" replace />;
   }
 
   const { result } = location.state;
-  // Menambahkan nilai default yang aman untuk semua properti
+
   const { 
     patient_name = "N/A", 
     diagnosis_summary = "Tidak ada ringkasan.", 
     key_metrics = [], 
     medications = [], 
     recommendations = "Tidak ada rekomendasi.",
-    food_recommendations = [] // <-- 1. Ambil data baru dengan nilai default
+    food_recommendations = [] 
   } = result;
 
   return (

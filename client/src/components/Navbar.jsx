@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +16,7 @@ const Navbar = () => {
         {/* Link Navigasi */}
         <div className="flex space-x-4 items-center">
           {isLoggedIn ? (
-            // JIKA SUDAH LOGIN
+            
             <>
               <Link
                 to="/dashboard"

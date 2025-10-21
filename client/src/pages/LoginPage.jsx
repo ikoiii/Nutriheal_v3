@@ -1,8 +1,6 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-// HAPUS: import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext'; // <-- Impor hook
+import { useAuth } from '../context/AuthContext'; 
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -10,12 +8,8 @@ const LoginPage = () => {
     password: '',
   });
 
-  // --- TAMBAHKAN INI ---
-  // Kita perlu state untuk error
   const [error, setError] = useState(null); 
-  // Ambil fungsi login dari context
   const { login } = useAuth();
-  // --------------------
 
   const handleChange = (e) => {
     setFormData({
@@ -26,28 +20,13 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Bersihkan error lama
+    setError(null); 
 
     try {
-      // Kirim data ke endpoint login
+    
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-
-      // --- UBAH BAGIAN INI ---
-      // Ganti semua kode lama ini:
-      /*
-        const { token } = response.data;
-        localStorage.setItem('nutriheal-token', token);
-        alert('Login berhasil!');
-        navigate('/dashboard'); 
-      */
-
-      // Menjadi satu baris ini:
       login(response.data.token);
-      // Fungsi login() dari context akan otomatis menyimpan token,
-      // mengubah state isLoggedIn, dan mengarahkan ke dashboard.
-
     } catch (err) {
-      // Jika gagal:
       console.error('Error saat login:', err.response?.data?.message || err.message);
       setError(err.response?.data?.message || 'Login gagal. Email atau password salah.');
     }

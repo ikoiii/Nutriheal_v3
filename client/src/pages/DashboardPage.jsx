@@ -1,8 +1,6 @@
-// src/pages/DashboardPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-// HAPUS SEMUA IMPORT DARI 'recharts'
 
 const DashboardPage = () => {
   const [history, setHistory] = useState([]);

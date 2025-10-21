@@ -1,13 +1,12 @@
-// src/App.jsx
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
-import UploadPage from './pages/UploadPage';         // <-- 1. Import
-import AnalysisPage from './pages/AnalysisPage';     // <-- 2. Import
-import ProtectedRoute from './components/ProtectedRoute'; // <-- 3. Import
+import UploadPage from './pages/UploadPage';         
+import AnalysisPage from './pages/AnalysisPage';     
+import ProtectedRoute from './components/ProtectedRoute'; 
 
 function App() {
   return (

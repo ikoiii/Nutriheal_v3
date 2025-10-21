@@ -1,14 +1,13 @@
-// src/pages/UploadPage.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext'; 
 
 const UploadPage = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { token } = useAuth(); // Ambil token dari context
+  const { token } = useAuth(); 
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
@@ -41,7 +40,7 @@ const UploadPage = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:5000/api/meals/analyze', // Endpoint tetap sama
+        'http://localhost:5000/api/meals/analyze',
         formData,
         {
           headers: {
@@ -51,7 +50,6 @@ const UploadPage = () => {
         }
       );
 
-      // Kirim data hasil analisis ke halaman berikutnya
       navigate('/analysis', { state: { result: response.data.data } });
 
     } catch (err) {
@@ -80,7 +78,7 @@ const UploadPage = () => {
             id="file-upload"
             name="file-upload"
             type="file"
-            accept="application/pdf" // <-- HANYA MENERIMA PDF
+            accept="application/pdf"
             onChange={handleFileChange}
             className="mt-1 block w-full text-sm text-gray-500
                       file:mr-4 file:py-2 file:px-4
