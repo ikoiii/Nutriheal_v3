@@ -26,6 +26,14 @@ async function extractTextFromPdf(filePath) {
   });
 }
 
+// --- MODIFIKASI DIMULAI: Fungsi Bantuan Penundaan ---
+/**
+ * Fungsi helper untuk membuat penundaan (delay) secara asynchronous.
+ * @param {number} ms - Waktu tunda dalam milidetik.
+ */
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// --- MODIFIKASI SELESAI ---
+
 const analyzeRecord = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "File PDF rekam medis harus diunggah" });
@@ -47,7 +55,8 @@ const analyzeRecord = async (req, res) => {
       model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
       console.log("✅ Model gemini-2.5-flash tersedia");
     } catch (err) {
-      console.warn("⚠️ Model gemini-1.5-pro tidak tersedia, fallback ke gemini-pro");
+      // Perbaikan kecil pada komentar Anda:
+      console.warn("⚠️ Model gemini-2.5-flash tidak tersedia, fallback ke gemini-pro");
       model = genAI.getGenerativeModel({ model: "gemini-pro" });
     }
 
@@ -86,10 +95,53 @@ Struktur JSON:
 }
 `;
 
+    // --- MODIFIKASI DIMULAI: Logika Exponential Backoff ---
+    
     console.log("📤 Mengirim ke Gemini...");
-    const result = await model.generateContent(prompt);
-    let responseText = result.response.text().trim();
-    console.log("📥 Respons AI diterima (preview):", responseText.slice(0, 200));
+
+    let result;
+    let responseText = "";
+    const MAX_RETRIES = 3; // Coba lagi maksimal 3 kali (total 4 percobaan)
+    const BASE_DELAY_MS = 1000; // Waktu tunggu awal 1 detik
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        // Hanya lakukan penundaan SETELAH percobaan pertama gagal
+        if (attempt > 0) {
+          // Hitung waktu tunggu: 1s, 2s, 4s (+ "jitter" acak)
+          const delayTime = (BASE_DELAY_MS * Math.pow(2, attempt - 1)) + (Math.random() * 1000);
+          console.warn(`⚠️ Percobaan ${attempt} gagal. Mencoba lagi dalam ${Math.round(delayTime)}ms...`);
+          await delay(delayTime);
+        }
+
+        result = await model.generateContent(prompt);
+        responseText = result.response.text().trim();
+        console.log("📥 Respons AI diterima (preview):", responseText.slice(0, 200));
+        
+        // Jika berhasil, keluar dari loop retry
+        break;
+
+      } catch (error) {
+        // Cek apakah error bisa dicoba lagi (503 Service Unavailable atau 429 Too Many Requests)
+        const isRetryable = error.status === 503 || error.status === 429;
+
+        console.warn(`❌ Error (Percobaan ${attempt + 1}/${MAX_RETRIES + 1}): ${error.status} ${error.statusText || error.message}`);
+
+        // Jika error BISA dicoba lagi dan masih ada sisa percobaan
+        if (isRetryable && attempt < MAX_RETRIES) {
+          // Biarkan loop berlanjut untuk mencoba lagi
+          continue;
+        } else {
+          // Jika ini adalah percobaan terakhir ATAU error tidak bisa dicoba lagi (misal 400 Bad Request)
+          console.error(`❌ Gagal total mengirim ke Gemini setelah ${attempt + 1} percobaan.`);
+          // Lempar error untuk ditangkap oleh blok catch (error) utama di luar
+          throw error; 
+        }
+      }
+    }
+    
+    // --- MODIFIKASI SELESAI ---
+
 
     let analysisResult;
     try {
@@ -125,6 +177,10 @@ Struktur JSON:
     });
   } catch (error) {
     console.error("❌ Error saat analisis PDF:", error);
+    // Cek apakah ini error dari Gemini atau error lain
+    if (error.status === 503 || error.status === 429) {
+         return res.status(503).json({ message: "Server AI sedang sibuk. Silakan coba lagi beberapa saat." });
+    }
     if (error.message.includes("Tidak ada teks")) {
       return res.status(400).json({ message: error.message });
     }
