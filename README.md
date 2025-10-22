@@ -1,56 +1,126 @@
-# Nutriheal
+# Nutriheal v2
 
-This repository contains the source code for the Nutriheal application, separated into a client and a server.
+## Deskripsi Proyek
 
-## Client
+Nutriheal v2 adalah aplikasi web inovatif yang dirancang untuk membantu pengguna memahami rekam medis mereka dengan lebih baik dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan Google Gemini, aplikasi ini mampu mengekstrak informasi kunci dari dokumen PDF rekam medis, menganalisisnya, dan menyajikan ringkasan yang mudah dipahami, serta saran makanan yang disesuaikan dengan kondisi kesehatan pengguna.
 
-The `client` directory contains the frontend of the application, built with React and Vite.
+## Fitur Utama
 
-### To run the client:
+-   **Analisis Rekam Medis Berbasis AI**: Unggah file PDF rekam medis Anda dan biarkan Gemini AI menganalisisnya untuk mengekstrak data penting.
+-   **Ringkasan Diagnosis & Metrik Kunci**: Dapatkan ringkasan diagnosis, identitas pasien, metrik medis utama (seperti tekanan darah, kolesterol, gula darah), dan daftar obat yang tercatat.
+-   **Rekomendasi Gizi Personal**: Terima saran makanan yang disesuaikan untuk sarapan, makan siang, makan malam, dan camilan, berdasarkan kondisi medis yang terdeteksi.
+-   **Rekomendasi Umum**: Dapatkan saran kesehatan umum yang relevan dengan hasil analisis Anda.
+-   **Riwayat Analisis**: Lihat kembali riwayat analisis rekam medis Anda yang tersimpan.
+-   **Autentikasi Pengguna**: Sistem login dan pendaftaran untuk mengelola data pengguna dengan aman.
+-   **Antarmuka Pengguna Intuitif**: Desain responsif dan mudah digunakan yang dibangun dengan React dan shadcn/ui.
 
-1.  Navigate to the `client` directory: `cd client`
-2.  Install dependencies: `npm install`
-3.  Start the development server: `npm run dev`
+## Teknologi yang Digunakan
 
-### Client Dependencies:
+### Frontend
 
-*   **axios**: For making HTTP requests to the server.
-*   **react**: The core React library for building user interfaces.
-*   **react-dom**: Serves as the entry point to the DOM and server renderers for React.
-*   **react-router-dom**: For handling routing within the application.
+-   **React**: Pustaka JavaScript untuk membangun antarmuka pengguna.
+-   **TypeScript**: Superset JavaScript yang menambahkan pengetikan statis.
+-   **React Router DOM**: Untuk navigasi deklaratif di aplikasi React.
+-   **React Query (TanStack Query)**: Untuk manajemen data, caching, dan sinkronisasi data server-side.
+-   **shadcn/ui**: Komponen UI yang dapat disesuaikan dan mudah diakses, dibangun di atas Tailwind CSS dan Radix UI.
+-   **Tailwind CSS**: Kerangka kerja CSS utility-first untuk styling yang cepat.
 
-### Client Dev Dependencies:
+### Backend
 
-*   **@vitejs/plugin-react**: Vite plugin for React.
-*   **vite**: A modern frontend build tool that provides a faster and leaner development experience.
-*   **eslint**: A tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
-*   **tailwindcss**: A utility-first CSS framework for rapidly building custom designs.
-*   **autoprefixer**: A PostCSS plugin to parse CSS and add vendor prefixes to CSS rules.
-*   **postcss**: A tool for transforming CSS with JavaScript.
+-   **Node.js**: Lingkungan runtime JavaScript.
+-   **Express.js**: Kerangka kerja aplikasi web untuk Node.js.
+-   **Google Generative AI (Gemini API)**: Untuk pemrosesan bahasa alami dan analisis teks dari rekam medis.
+-   **PDFReader**: Pustaka untuk mengekstrak teks dari file PDF.
+-   **MySQL**: Sistem manajemen basis data relasional untuk menyimpan data pengguna dan riwayat analisis.
+-   **`fs` module**: Untuk operasi sistem file (misalnya, menghapus file PDF setelah diproses).
 
-## Server
+## Instalasi dan Setup
 
-The `server` directory contains the backend of the application, built with Node.js and Express.
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal Anda.
 
-### To run the server:
+### Prasyarat
 
-1.  Navigate to the `server` directory: `cd server`
-2.  Install dependencies: `npm install`
-3.  Start the server: `npm start`
+-   Node.js (v18 atau lebih baru)
+-   npm atau Yarn
+-   MySQL Server
 
-### Server Dependencies:
+### Langkah-langkah
 
-*   **@google/generative-ai**: The official Google Generative AI SDK for Node.js.
-*   **bcrypt**: A library for hashing passwords.
-*   **cors**: A Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
-*   **dotenv**: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
-*   **express**: A fast, unopinionated, minimalist web framework for Node.js.
-*   **jsonwebtoken**: An implementation of JSON Web Tokens.
-*   **multer**: A node.js middleware for handling `multipart/form-data`, which is primarily used for uploading files.
-*   **mysql2**: A MySQL client for Node.js with a focus on performance.
-*   **node-fetch**: A light-weight module that brings the `window.fetch` API to Node.js.
-*   **pdfreader**: A tool to extract text from PDF files.
+1.  **Kloning Repositori:**
+    ```bash
+    git clone https://github.com/your-username/Nutriheal_v2.git
+    cd Nutriheal_v2
+    ```
 
-### Server Dev Dependencies:
+2.  **Setup Backend (Server):**
+    ```bash
+    cd server
+    npm install # atau yarn install
+    ```
+    Buat file `.env` di direktori `server` dan tambahkan variabel lingkungan berikut:
+    ```env
+    PORT=5000
+    DB_HOST=localhost
+    DB_USER=your_mysql_user
+    DB_PASSWORD=your_mysql_password
+    DB_NAME=nutriheal_db
+    GEMINI_API_KEY=your_google_gemini_api_key
+    JWT_SECRET=your_jwt_secret_key
+    ```
+    **Catatan**: Ganti `your_mysql_user`, `your_mysql_password`, `nutriheal_db`, `your_google_gemini_api_key`, dan `your_jwt_secret_key` dengan kredensial Anda.
 
-*   **nodemon**: A utility that will monitor for any changes in your source and automatically restart your server.
+    **Inisialisasi Database MySQL:**
+    Buat database `nutriheal_db` di MySQL Anda. Struktur tabel `medical_analyses` dan `users` akan dibuat secara otomatis atau Anda perlu membuatnya secara manual jika tidak ada skrip migrasi. Contoh skema untuk `medical_analyses`:
+    ```sql
+    CREATE TABLE medical_analyses (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        file_name VARCHAR(255) NOT NULL,
+        analysis_summary JSON NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+    -- Dan tabel users jika belum ada
+    CREATE TABLE users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
+
+    Jalankan server:
+    ```bash
+    npm start # atau node server.js
+    ```
+
+3.  **Setup Frontend (Client):**
+    ```bash
+    cd ../client
+    npm install # atau yarn install
+    ```
+    Buat file `.env` di direktori `client` dan tambahkan variabel lingkungan berikut:
+    ```env
+    VITE_API_BASE_URL=http://localhost:5000/api
+    ```
+    Jalankan aplikasi frontend:
+    ```bash
+    npm run dev # atau yarn dev
+    ```
+
+4.  **Akses Aplikasi:**
+    Buka browser Anda dan navigasikan ke `http://localhost:5173` (atau port yang digunakan oleh Vite).
+
+## Penggunaan
+
+1.  **Daftar/Login**: Buat akun baru atau masuk menggunakan kredensial Anda.
+2.  **Unggah PDF**: Navigasikan ke halaman unggah dan pilih file PDF rekam medis Anda.
+3.  **Lihat Hasil**: Setelah analisis selesai, Anda akan diarahkan ke halaman hasil yang menampilkan ringkasan diagnosis, metrik kunci, rekomendasi obat, dan saran gizi.
+4.  **Riwayat**: Anda dapat melihat semua analisis sebelumnya di halaman riwayat.
+
+## Kontribusi
+
+Kami menyambut kontribusi! Jika Anda ingin berkontribusi pada proyek ini, silakan fork repositori, buat branch baru, lakukan perubahan Anda, dan kirimkan pull request.
+
+**Catatan**: Pastikan untuk mengganti placeholder seperti `your-username` dan detail kredensial lainnya dengan informasi yang benar.
