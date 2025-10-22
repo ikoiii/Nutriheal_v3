@@ -1,37 +1,16 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import LoadingOverlay from "@/components/LoadingOverlay"; // Import komponen LoadingOverlay
-import { Toaster, toast } from "sonner"; // Import Toaster dan toast
+import LoadingOverlay from "@/components/LoadingOverlay";
+import { Toaster } from "sonner";
 import { Label } from "@/components/ui/label";
+import { useSignUpForm } from "@/hooks/useSignUpForm";
 
 export default function SignUp() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { signup } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await signup(name, email, password);
-      toast.success("Akun berhasil dibuat! Mengalihkan ke halaman upload...");
-      navigate("/upload"); // Navigate to upload page on successful signup and login
-    } catch (err) {
-      toast.error("Gagal membuat akun. Email mungkin sudah terdaftar.");
-      console.error("Signup failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { name, setName, email, setEmail, password, setPassword, loading, handleSubmit } = useSignUpForm();
 
   return (
     <>
@@ -44,7 +23,7 @@ export default function SignUp() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate("/")}
+          onClick={() => window.history.back()} // Menggunakan window.history.back() untuk kembali
           className="absolute top-8 left-8 bg-card rounded-full shadow-md"
         >
           <ArrowLeft className="w-6 h-6" />

@@ -1,109 +1,109 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-
-// --- Axios Instance ---
-export const apiClient = axios.create({
-  baseURL: "http://localhost:5000/api", // Sesuaikan dengan URL server Anda
-});
-
-// --- Interfaces ---
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string; // Avatar is optional
-}
+import { authService } from "@/services/authService";
+import { useClientErrorHandler } from "@/hooks/useClientErrorHandler";
 
 interface AuthContextType {
-  user: User | null;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  isAuthenticated: boolean;
+  token: string | null;
 }
 
-interface JwtPayload {
-  id: string;
-  name: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
-
-// --- Auth Context ---
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// --- Auth Provider Component ---
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem("token") ? true : false;
+  });
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem("token");
+  });
+
+  const { handleError } = useClientErrorHandler();
 
   useEffect(() => {
-    // Check for token in localStorage on initial load
-    const token = localStorage.getItem("token");
     if (token) {
-      try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        // Check if token is expired
-        if (decoded.exp * 1000 > Date.now()) {
-          setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
-          // Set token for all subsequent requests
-          apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        } else {
-          // Token is expired
-          localStorage.removeItem("token");
-        }
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("token");
-      }
+      localStorage.setItem("token", token);
+      setIsAuthenticated(true);
+    } else {
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
     }
+  }, [token]);
+
+  const login = useCallback(async (email: string, password: string) => {
+    try {
+      const response = await authService.login(email, password);
+      setToken(response.token);
+    } catch (error) {
+      handleError(error);
+      throw error; // Re-throw to allow components to handle specific logic if needed
+    }
+  }, [handleError]);
+
+  const signup = useCallback(async (name: string, email: string, password: string) => {
+    try {
+      const response = await authService.signup(name, email, password);
+      // After successful signup, automatically log in the user
+      const loginResponse = await authService.login(email, password);
+      setToken(loginResponse.token);
+    } catch (error) {
+      handleError(error);
+      throw error; // Re-throw to allow components to handle specific logic if needed
+    }
+  }, [handleError]);
+
+  const logout = useCallback(() => {
+    setToken(null);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await apiClient.post("/auth/login", { email, password });
-    const { token } = response.data;
+  useEffect(() => {
+    apiClient.interceptors.request.use(
+      (config) => {
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
 
-    localStorage.setItem("token", token);
-    const decoded = jwtDecode<JwtPayload>(token);
-    setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
-
-    // Set token for all subsequent requests
-    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  };
-
-  const signup = async (name: string, email: string, password: string) => {
-    await apiClient.post("/auth/register", { name, email, password });
-    // Automatically log in the user after successful registration
-    await login(email, password);
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-    delete apiClient.defaults.headers.common["Authorization"];
-  };
+    apiClient.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          logout();
+        }
+        handleError(error); // Centralized error handling
+        return Promise.reject(error); // Re-throw to propagate error
+      }
+    );
+  }, [token, logout, handleError]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        signup,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, login, signup, logout, token }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-// --- Custom Hook ---
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
+};

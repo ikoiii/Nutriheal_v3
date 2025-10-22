@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,61 +7,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useToast } from "@/components/ui/use-toast";
 import { Stethoscope, Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const doctors = [
-  {
-    name: "Dr. Amanda Sari",
-    specialization: "Ahli Gizi Klinis",
-    avatar: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    name: "Dr. Budi Santoso",
-    specialization: "Nutrisionis Anak",
-    avatar: "https://i.pravatar.cc/150?img=2",
-  },
-  {
-    name: "Dr. Citra Lestari",
-    specialization: "Konsultan Diet",
-    avatar: "https://i.pravatar.cc/150?img=3",
-  },
-];
-
-const timeSlots = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
+import { useBookingForm } from "@/hooks/useBookingForm";
 
 export default function Service() {
-  const [selectedDoctor, setSelectedDoctor] = useState<(typeof doctors)[0] | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string>("");
-  const [problemDescription, setProblemDescription] = useState("");
-  const [isBooking, setIsBooking] = useState(false); // State baru untuk indikator loading tombol
-  const { toast } = useToast();
-
-  const handleBooking = () => {
-    if (!selectedDoctor || !selectedDate || !selectedTime) {
-      toast({
-        variant: "destructive",
-        title: "Pemesanan Gagal",
-        description: "Harap pilih dokter, tanggal, dan waktu terlebih dahulu.",
-      });
-      return;
-    }
-    setIsBooking(true); // Mulai loading
-    // Simulasi panggilan API
-    setTimeout(() => {
-      toast({
-        title: "Pemesanan Berhasil!",
-        description: `Anda telah berhasil memesan konsultasi dengan ${selectedDoctor.name} pada ${new Intl.DateTimeFormat('id-ID', { dateStyle: 'full' }).format(selectedDate)} jam ${selectedTime}.`,
-      });
-      setSelectedDoctor(null);
-      setSelectedDate(new Date());
-      setSelectedTime("");
-      setProblemDescription("");
-      setIsBooking(false); // Hentikan loading
-    }, 1500); // Simulasi delay 1.5 detik
-  };
+  const {
+    doctors,
+    timeSlots,
+    selectedDoctor,
+    setSelectedDoctor,
+    selectedDate,
+    setSelectedDate,
+    selectedTime,
+    setSelectedTime,
+    problemDescription,
+    setProblemDescription,
+    isBooking,
+    handleBooking,
+  } = useBookingForm();
 
   return (
     <div className="container mx-auto py-8 pt-24 md:pt-32">
@@ -97,7 +60,7 @@ export default function Service() {
 
         {/* Formulir Pemesanan */}
         <div className="lg:col-span-2"> 
-            <Card className="h-full"> {/* Menambahkan h-full agar tinggi kartu konsisten */}
+            <Card className="h-full"> 
                 <CardHeader>
                     <CardTitle className="text-2xl">Jadwalkan Konsultasi</CardTitle>
                     {selectedDoctor ? 
@@ -135,7 +98,7 @@ export default function Service() {
                                         selected={selectedDate}
                                         onSelect={setSelectedDate}
                                         disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-                                        locale={id} // Menambahkan locale Bahasa Indonesia ke kalender
+                                        locale={id} 
                                         initialFocus
                                     />
                                     </PopoverContent>

@@ -33,6 +33,30 @@ Nutriheal v2 adalah aplikasi web inovatif yang dirancang untuk membantu pengguna
 -   **PDFReader**: Pustaka untuk mengekstrak teks dari file PDF.
 -   **MySQL**: Sistem manajemen basis data relasional untuk menyimpan data pengguna dan riwayat analisis.
 -   **`fs` module**: Untuk operasi sistem file (misalnya, menghapus file PDF setelah diproses).
+-   **`express-validator`**: Middleware untuk validasi input.
+-   **`Jest`**: Framework pengujian JavaScript.
+
+## Struktur Proyek
+
+Proyek ini dibagi menjadi dua bagian utama, `client` (frontend) dan `server` (backend), dengan struktur modular untuk memisahkan kekhawatiran:
+
+### `server/`
+-   `config/`: Konfigurasi database.
+-   `controllers/`: Logika penanganan permintaan HTTP, berinteraksi dengan layanan.
+-   `middleware/`: Middleware Express untuk autentikasi, validasi, dan penanganan kesalahan.
+-   `repositories/`: Abstraksi untuk interaksi database.
+-   `routes/`: Definisi rute API.
+-   `services/`: Logika bisnis inti, berinteraksi dengan repositori dan utilitas eksternal (misalnya, Gemini AI).
+-   `tests/`: Unit tests untuk backend.
+-   `utils/`: Fungsi utilitas umum (misalnya, ekstraksi PDF).
+
+### `client/src/`
+-   `components/`: Komponen UI yang dapat digunakan kembali, termasuk komponen landing page yang lebih kecil.
+-   `contexts/`: Konteks React untuk manajemen state global (misalnya, autentikasi).
+-   `hooks/`: Custom React Hooks untuk logika stateful yang dapat digunakan kembali (misalnya, form handling, data fetching).
+-   `lib/`: Fungsi utilitas frontend.
+-   `pages/`: Komponen halaman utama aplikasi.
+-   `services/`: Logika untuk interaksi API dari sisi klien.
 
 ## Instalasi dan Setup
 
@@ -83,7 +107,7 @@ Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal A
     -- Dan tabel users jika belum ada
     CREATE TABLE users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
+        name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -94,6 +118,12 @@ Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal A
     ```bash
     npm start # atau node server.js
     ```
+
+    Jalankan tes (opsional):
+    ```bash
+    npm test
+    ```
+    **Catatan**: Unit tests telah ditambahkan untuk `authRepository`, `authService`, `analysisRepository`, `pdfUtils`, `geminiService`, dan `recordController` untuk memastikan keandalan backend.
 
 3.  **Setup Frontend (Client):**
     ```bash

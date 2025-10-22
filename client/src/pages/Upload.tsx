@@ -1,84 +1,38 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, UploadCloud, X, Eye } from "lucide-react"; 
-import { apiClient } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Toaster, toast } from "sonner"; // Import Toaster dan toast
+import { Toaster } from "sonner";
 
-import LoadingOverlay from "@/components/LoadingOverlay"; // Import komponen LoadingOverlay yang baru
-
-interface AnalysisHistory {
-  id: number;
-  file_name: string;
-  analysis_result: string;
-  status: string;
-  created_at: string;
-}
+import LoadingOverlay from "@/components/LoadingOverlay";
+import { useFileUpload } from "@/hooks/useFileUpload";
+import { useAnalysisHistory } from "@/hooks/useAnalysisHistory";
 
 export default function Upload() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [history, setHistory] = useState<AnalysisHistory[]>([]);
-  const [isFetchingHistory, setIsFetchingHistory] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      setIsFetchingHistory(true);
-      try {
-        const response = await apiClient.get("/records/history");
-        setHistory(response.data);
-      } catch (err) {
-        console.error("Failed to fetch history:", err);
-        toast.error("Gagal memuat riwayat analisis.");
-      } finally {
-        setIsFetchingHistory(false);
-      }
-    };
-    fetchHistory();
-  }, []);
+  const { history, isFetchingHistory, fetchHistory } = useAnalysisHistory();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
-  const handleDragEnter = () => setIsDragging(true);
-  const handleDragLeave = () => setIsDragging(false);
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setSelectedFile(e.dataTransfer.files[0]); 
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (selectedFile) {
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append("pdfFile", selectedFile);
-
-      try {
-        const response = await apiClient.post("/records/analyze", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        navigate("/results", { state: { analysisData: response.data } });
-      } catch (err) {
-        console.error("File upload failed:", err);
-        toast.error("Upload gagal. Pastikan file Anda valid dan coba lagi.");
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
+  const { 
+    selectedFile,
+    isUploading,
+    isDragging,
+    handleFileChange,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    handleDrop,
+    handleSubmit,
+    clearSelectedFile,
+  } = useFileUpload({
+    onUploadSuccess: (analysisData) => {
+      navigate("/results", { state: { analysisData } });
+      fetchHistory(); // Refresh history after successful upload
+    },
+  });
 
   return (
     <>
@@ -111,7 +65,7 @@ export default function Upload() {
             <div className="mt-6 flex items-center justify-center gap-3 p-4 bg-muted/50 rounded-lg">
               <FileText className="h-6 w-6 text-muted-foreground" />
               <Badge variant="secondary">{selectedFile.name}</Badge>
-              <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)}>
+              <Button variant="ghost" size="icon" onClick={clearSelectedFile}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -159,7 +113,7 @@ export default function Upload() {
                       <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
                       <TableCell className="font-medium">{item.file_name}</TableCell>
                       <TableCell>
-                        <Badge variant={item.status === 'Normal' ? 'default' : 'destructive'}>{item.status}</Badge>
+                        <Badge variant={item.analysis_summary.diagnosis_summary.toLowerCase().includes('normal') ? 'default' : 'destructive'}>{item.analysis_summary.diagnosis_summary.toLowerCase().includes('normal') ? 'Normal' : 'Perlu Perhatian'}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="outline" size="sm" onClick={() => navigate("/results", { state: { analysisData: item } })}>
@@ -190,7 +144,7 @@ export default function Upload() {
                   <div>
                     <p className="font-bold text-sm truncate max-w-[150px]">{item.file_name}</p>
                     <p className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleDateString()}</p>
-                    <Badge variant={item.status === 'Normal' ? 'default' : 'destructive'} className="mt-2">{item.status}</Badge>
+                    <Badge variant={item.analysis_summary.diagnosis_summary.toLowerCase().includes('normal') ? 'default' : 'destructive'}>{item.analysis_summary.diagnosis_summary.toLowerCase().includes('normal') ? 'Normal' : 'Perlu Perhatian'}</Badge>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => navigate("/results", { state: { analysisData: item } })}>
                     <Eye className="h-4 w-4" />
