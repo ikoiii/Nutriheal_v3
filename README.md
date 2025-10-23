@@ -1,6 +1,6 @@
-# NutriHeal v2
+# NutriHeal v3
 
-NutriHeal v2 adalah aplikasi web inovatif yang dirancang untuk membantu Anda memahami rekam medis dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan (AI), aplikasi ini mampu menganalisis dokumen PDF rekam medis, menyajikan ringkasan yang mudah dipahami, serta memberikan saran praktis untuk kesehatan Anda.
+NutriHeal v3 adalah aplikasi web inovatif yang dirancang untuk membantu Anda memahami rekam medis dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan (AI), aplikasi ini mampu menganalisis dokumen PDF rekam medis, menyajikan ringkasan yang mudah dipahami, serta memberikan saran praktis untuk kesehatan Anda.
 
 ## Fitur Utama
 
