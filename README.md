@@ -1,7 +1,5 @@
 # 🌿 NutriHeal v3 — Analisis Rekam Medis & Rekomendasi Gizi Berbasis AI
 
-![NutriHeal Banner](https://images.unsplash.com/photo-1606209462921-3e3e51506c63?auto=format&fit=crop&w=1200&q=80)
-
 NutriHeal v3 adalah aplikasi web modern yang membantu Anda **memahami rekam medis dengan lebih cerdas** dan **mendapatkan rekomendasi gizi yang dipersonalisasi**.  
 Dengan dukungan **kecerdasan buatan (AI)**, aplikasi ini mampu membaca file PDF rekam medis Anda, mengekstrak data penting, serta memberikan **saran pola makan yang sesuai dengan kondisi kesehatan** Anda.
 
