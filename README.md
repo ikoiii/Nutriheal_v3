@@ -205,6 +205,7 @@ npm test
 
 🧩 Struktur Direktori Proyek
 
+```bash
 NutriHeal_v3/
 ├── client/              # Frontend (React + TypeScript + Tailwind)
 │   ├── src/
@@ -222,7 +223,7 @@ NutriHeal_v3/
 │   └── init.sql         # Skrip pembuatan tabel
 │
 └── README.md
-
+```
 🎓 Tentang Proyek
 
 NutriHeal dikembangkan sebagai proyek teknologi kesehatan cerdas yang memanfaatkan AI untuk meningkatkan kesadaran gizi dan kesehatan masyarakat.
@@ -240,4 +241,4 @@ git push origin fitur-baru
 ```
 ## ⚖️ License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License 
