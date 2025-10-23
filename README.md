@@ -1,111 +1,132 @@
-# NutriHeal v3
+# 🌿 NutriHeal v3 — Analisis Rekam Medis & Rekomendasi Gizi Berbasis AI
 
-NutriHeal v3 adalah aplikasi web inovatif yang dirancang untuk membantu Anda memahami rekam medis dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan (AI), aplikasi ini mampu menganalisis dokumen PDF rekam medis, menyajikan ringkasan yang mudah dipahami, serta memberikan saran praktis untuk kesehatan Anda.
+![NutriHeal Banner](https://images.unsplash.com/photo-1606209462921-3e3e51506c63?auto=format&fit=crop&w=1200&q=80)
 
-## Fitur Utama
+NutriHeal v3 adalah aplikasi web modern yang membantu Anda **memahami rekam medis dengan lebih cerdas** dan **mendapatkan rekomendasi gizi yang dipersonalisasi**.  
+Dengan dukungan **kecerdasan buatan (AI)**, aplikasi ini mampu membaca file PDF rekam medis Anda, mengekstrak data penting, serta memberikan **saran pola makan yang sesuai dengan kondisi kesehatan** Anda.
 
--   **Analisis Rekam Medis Berbasis AI**: Unggah file PDF rekam medis Anda dan biarkan sistem AI menganalisisnya untuk mengekstrak data penting.
--   **Ringkasan Kesehatan**: Dapatkan ringkasan diagnosis, metrik medis utama (tekanan darah, kolesterol, dll.), dan daftar obat yang tercatat.
--   **Rekomendasi Gizi Personal**: Terima saran menu harian (sarapan, makan siang, makan malam, camilan) yang disesuaikan dengan kondisi medis Anda.
--   **Asisten Chat AI**: Ajukan pertanyaan seputar kesehatan dan dapatkan jawaban informatif berdasarkan data kesehatan terakhir Anda.
--   **Manajemen Tujuan**: Tetapkan dan lacak tujuan kesehatan pribadi Anda, seperti "minum 8 gelas air setiap hari".
--   **Check-in Harian**: Catat tingkat energi, stres, dan kualitas tidur Anda setiap hari untuk memantau kemajuan dan mendapatkan *streak* (rentetan) harian.
--   **Notifikasi Push**: Dapatkan pengingat dan wawasan proaktif langsung di perangkat Anda (jika diizinkan).
--   **Riwayat Analisis**: Lihat kembali semua riwayat analisis rekam medis Anda yang tersimpan dengan aman.
+---
 
-## Teknologi yang Digunakan
+## 🧠 Fitur Unggulan
 
-| Kategori      | Teknologi                                                                                             |
-| :------------ | :---------------------------------------------------------------------------------------------------- |
-| **Frontend**  | React, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, shadcn/ui, Recharts, Sonner      |
-| **Backend**   | Node.js, Express.js, MySQL                                                                            |
-| **AI & Data** | Google Generative AI (Gemini API), `pdfreader`                                                        |
-| **Lainnya**   | JWT (Autentikasi), `bcrypt` (Hashing), `multer` (File Upload), `web-push` (Notifikasi), Jest (Testing) |
+| Fitur | Deskripsi |
+| :---- | :--------- |
+| 🩺 **Analisis Rekam Medis Berbasis AI** | Unggah file PDF rekam medis Anda, dan sistem AI akan mengekstrak informasi penting seperti diagnosis, obat, dan hasil lab. |
+| 📊 **Ringkasan Kesehatan Otomatis** | Dapatkan tampilan ringkas mengenai tekanan darah, kadar kolesterol, berat badan, dan metrik penting lainnya. |
+| 🥗 **Rekomendasi Gizi Personal** | AI memberikan saran menu harian (sarapan, makan siang, makan malam, dan camilan) sesuai dengan kebutuhan tubuh Anda. |
+| 💬 **Asisten Chat AI** | Ajukan pertanyaan seputar kesehatan dan gizi berdasarkan data terakhir Anda. |
+| 🎯 **Manajemen Tujuan Sehat** | Tetapkan target pribadi seperti *“minum 8 gelas air per hari”* dan pantau progres Anda setiap hari. |
+| 📅 **Check-in Harian & Streaks** | Catat energi, stres, dan kualitas tidur Anda. Dapatkan *reward streak* untuk konsistensi. |
+| 🔔 **Notifikasi Push** | Terima pengingat dan insight langsung ke perangkat Anda. |
+| 🗂 **Riwayat Analisis Aman** | Semua rekam medis tersimpan dengan aman dan dapat diakses kembali kapan pun. |
 
-## Panduan Penggunaan
+---
 
-### 1. Prasyarat
+## ⚙️ Teknologi yang Digunakan
 
-Pastikan Anda telah menginstal perangkat lunak berikut di sistem Anda:
--   Node.js (v18 atau lebih baru)
--   npm (biasanya terinstal bersama Node.js)
--   Server Database MySQL
+| Kategori | Teknologi |
+| :-------- | :--------- |
+| **Frontend** | React, **TypeScript**, Vite, React Router, TanStack Query, Tailwind CSS, shadcn/ui, Recharts, Sonner |
+| **Backend** | Node.js, **Express.js**, MySQL |
+| **AI & Data** | Google Generative AI (Gemini API), `pdfreader` |
+| **Security & Utility** | JWT (Autentikasi), `bcrypt` (Hashing), `multer` (File Upload), `web-push` (Notifikasi), Jest (Testing) |
+| **Tools & Environment** | Visual Studio Code, XAMPP, MySQL Workbench, Git, Postman, CLI Gemini, Gemini PRO |
 
-### 2. Instalasi
+---
 
-A. **Kloning Repositori**
-   Buka terminal Anda dan jalankan perintah berikut untuk mengkloning proyek ke komputer lokal Anda.
-   ```bash
-   git clone https://github.com/your-username/Nutriheal_v2.git
-   cd Nutriheal_v2
-   ```
-   *(Ganti `your-username` dengan nama pengguna GitHub Anda)*
+## 👨‍💻 Tentang Pengembang
 
-B. **Setup Backend (Server)**
-   Buka terminal baru, masuk ke direktori `server`, dan ikuti langkah-langkah ini.
-   ```bash
-   cd server
-   npm install
-   ```
-   Selanjutnya, buat file `.env` di dalam direktori `server` dengan menyalin dari contoh di bawah.
-   
-   **Contoh `server/.env`:**
-   ```env
-   # Server Configuration
-   PORT=5000
+> **Angger Bayu Sentiko**  
+> Mahasiswa **Teknik Informatika – Universitas Pamulang**  
+> Seorang **Fullstack Developer** atau bisa juga disebut dengan **vibe coder** dengan ketertarikan pada pengembangan aplikasi AI dan kesehatan digital.  
+> Menguasai stack modern seperti React, TypeScript, Tailwind, Node.js, dan Express dengan menggunakan tools AI secara keseluruhan
 
-   # Database Configuration
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_mysql_password
-   DB_NAME=nutriheal_db
+---
 
-   # Security
-   JWT_SECRET=kunci_rahasia_super_aman_dan_panjang
+## 🚀 Panduan Instalasi & Setup
 
-   # Gemini AI API Key
-   GEMINI_API_KEY=your_google_gemini_api_key
+### 1️⃣ Prasyarat
 
-   # Web Push Notifications (VAPID Keys)
-   VAPID_PUBLIC_KEY=your_vapid_public_key
-   VAPID_PRIVATE_KEY=your_vapid_private_key
-   ```
-   **Penting**: Ganti nilai placeholder (seperti `your_mysql_password`, `your_google_gemini_api_key`, dll.) dengan kredensial Anda yang sebenarnya. Anda dapat membuat kunci VAPID baru menggunakan berbagai library online.
+Pastikan perangkat Anda telah menginstal:
 
-C. **Setup Frontend (Client)**
-   Buka terminal lain, masuk ke direktori `client`, dan jalankan perintah instalasi.
-   ```bash
-   cd client
-   npm install
-   ```
-   File `.env` untuk client bersifat opsional, karena secara default ia akan mencoba terhubung ke server di `http://localhost:5000`.
+- Node.js **v18+**
+- npm (terpasang otomatis bersama Node.js)
+- MySQL Server (bisa dari XAMPP)
+- Visual Studio Code
 
-### 3. Inisialisasi Database
+---
 
-Jalankan server MySQL Anda dan gunakan query SQL berikut untuk membuat database dan semua tabel yang diperlukan.
+### 2️⃣ Kloning Repositori
 
-```sql
--- Buat database jika belum ada
+```bash
+git clone https://github.com/your-username/NutriHeal_v3.git
+cd NutriHeal_v3
+```
+💡 Ganti your-username dengan nama akun GitHub Anda.
+
+### 3️⃣ Setup Backend (Server)
+Masuk ke direktori server:
+```bash
+cd server
+npm install
+```
+Buat file .env di dalam direktori server/ seperti contoh berikut:
+```bash
+# Server Configuration
+PORT=5000
+
+# Database Configuration
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=nutriheal_db
+
+# Security
+JWT_SECRET=kunci_rahasia_super_aman_dan_panjang
+
+# Gemini AI API Key
+GEMINI_API_KEY=your_google_gemini_api_key
+
+# Web Push Notifications
+VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
+```
+⚠️ Jangan pernah upload file .env ke GitHub publik! ⚠️
+
+### 4️⃣ Setup Frontend (Client)
+
+Masuk ke direktori client:
+```bash
+cd client
+npm install
+npm run dev
+```
+Frontend akan berjalan di:
+👉 http://localhost:5173
+
+### 5️⃣ Inisialisasi Database
+
+Jalankan perintah SQL berikut di MySQL Workbench / phpMyAdmin:
+
+```bash
 CREATE DATABASE IF NOT EXISTS nutriheal_db;
-
--- Gunakan database
 USE nutriheal_db;
 
--- Tabel untuk pengguna
+-- Users
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     age INT,
-    weight DECIMAL(5, 2),
-    height DECIMAL(5, 2),
+    weight DECIMAL(5,2),
+    height DECIMAL(5,2),
     daily_checkin_streak INT DEFAULT 0,
     last_checkin_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabel untuk riwayat analisis medis
+-- Medical Analyses
 CREATE TABLE IF NOT EXISTS medical_analyses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -115,7 +136,7 @@ CREATE TABLE IF NOT EXISTS medical_analyses (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Tabel untuk log harian
+-- Daily Logs
 CREATE TABLE IF NOT EXISTS daily_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -129,17 +150,17 @@ CREATE TABLE IF NOT EXISTS daily_logs (
     UNIQUE KEY (user_id, log_date)
 );
 
--- Tabel untuk tujuan pengguna
+-- User Goals
 CREATE TABLE IF NOT EXISTS user_goals (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     goal_description VARCHAR(255) NOT NULL,
-    status ENUM('active', 'completed') DEFAULT 'active',
+    status ENUM('active','completed') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Tabel untuk progres tujuan
+-- Goal Progress
 CREATE TABLE IF NOT EXISTS goal_progress (
     id INT AUTO_INCREMENT PRIMARY KEY,
     goal_id INT,
@@ -149,7 +170,7 @@ CREATE TABLE IF NOT EXISTS goal_progress (
     FOREIGN KEY (goal_id) REFERENCES user_goals(id) ON DELETE CASCADE
 );
 
--- Tabel untuk langganan notifikasi push
+-- Push Notifications
 CREATE TABLE IF NOT EXISTS push_subscriptions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -160,29 +181,65 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 ```
-
-### 4. Menjalankan Aplikasi
-
-Anda perlu menjalankan server backend dan client frontend secara bersamaan di dua terminal terpisah.
-
-A. **Jalankan Backend**
-   Di dalam direktori `server/`:
-   ```bash
-   npm run dev
-   ```
-   Server akan berjalan di `http://localhost:5000`.
-
-B. **Jalankan Frontend**
-   Di dalam direktori `client/`:
-   ```bash
-   npm run dev
-   ```
-   Aplikasi React akan berjalan dan dapat diakses di `http://localhost:5173` (atau port lain yang ditampilkan di terminal).
-
-### 5. Menjalankan Tes (Opsional)
-
-Untuk memastikan semua fungsi backend berjalan dengan baik, jalankan unit tests.
-Di dalam direktori `server/`:
+### 6️⃣ Menjalankan Server
+Backend
 ```bash
+cd server
+node server.js
+```
+Server berjalan di 👉 http://localhost:5000
+
+Frontend
+
+```bash
+cd server
+npm run dev
+```
+Akses aplikasi di 👉 http://localhost:5173
+
+### 7️⃣ Testing (Opsional)
+
+Gunakan Jest untuk menguji endpoint backend:
+```bash
+cd server
 npm test
 ```
+
+🧩 Struktur Direktori Proyek
+
+NutriHeal_v3/
+├── client/              # Frontend (React + TypeScript + Tailwind)
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── server/              # Backend (Node.js + Express.js + MySQL)
+│   ├── routes/
+│   ├── controllers/
+│   ├── models/
+│   ├── middleware/
+│   └── package.json
+│
+├── database/
+│   └── init.sql         # Skrip pembuatan tabel
+│
+└── README.md
+
+🎓 Tentang Proyek
+
+NutriHeal dikembangkan sebagai proyek teknologi kesehatan cerdas yang memanfaatkan AI untuk meningkatkan kesadaran gizi dan kesehatan masyarakat.
+Dibuat oleh Angger Bayu Sentiko, mahasiswa Teknik Informatika – Universitas Pamulang.
+
+## 🤝 Kontribusi
+
+Kontribusi selalu terbuka untuk siapa pun!
+Silakan fork repository ini, buat branch baru, lalu kirim pull request Anda.
+
+```bash
+git checkout -b fitur-baru
+git commit -m "Menambahkan fitur baru"
+git push origin fitur-baru
+```
+## ⚖️ License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
