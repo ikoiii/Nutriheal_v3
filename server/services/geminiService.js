@@ -94,6 +94,47 @@ Struktur JSON:
   return responseText;
 }
 
+async function getChatCompletion(prompt) {
+  const model = await getGeminiModel();
+
+  console.log("📤 Mengirim ke Gemini (Chat)...");
+
+  let result;
+  let responseText = "";
+  const MAX_RETRIES = 3;
+  const BASE_DELAY_MS = 1000;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      if (attempt > 0) {
+        const delayTime = (BASE_DELAY_MS * Math.pow(2, attempt - 1)) + (Math.random() * 1000);
+        console.warn(`⚠️ Percobaan ${attempt} gagal. Mencoba lagi dalam ${Math.round(delayTime)}ms...`);
+        await delay(delayTime);
+      }
+
+      result = await model.generateContent(prompt);
+      responseText = result.response.text().trim();
+      console.log("📥 Respons AI diterima (preview):", responseText.slice(0, 200));
+      
+      break;
+
+    } catch (error) {
+      const isRetryable = error.status === 503 || error.status === 429;
+
+      console.warn(`❌ Error (Percobaan ${attempt + 1}/${MAX_RETRIES + 1}): ${error.status} ${error.statusText || error.message}`);
+
+      if (isRetryable && attempt < MAX_RETRIES) {
+        continue;
+      } else {
+        console.error(`❌ Gagal total mengirim ke Gemini setelah ${attempt + 1} percobaan.`);
+        throw error; 
+      }
+    }
+  }
+  return responseText;
+}
+
 module.exports = {
   analyzeTextWithGemini,
+  getChatCompletion,
 };

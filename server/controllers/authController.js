@@ -1,4 +1,4 @@
-const { register, login, AuthError } = require('../services/authService');
+const { register, login, getUserProfile, AuthError } = require('../services/authService');
 
 const registerUser = async (req, res, next) => {
   try {
@@ -34,7 +34,18 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const getLoggedInUserProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id; // User ID from authenticated token
+    const userProfile = await getUserProfile(userId);
+    res.status(200).json(userProfile);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  getLoggedInUserProfile,
 };

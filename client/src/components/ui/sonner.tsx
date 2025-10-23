@@ -1,10 +1,22 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
+import * as React from "react";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Return null on the server and initial client render to avoid hydration mismatch
+    // and to ensure theme is accessed only on the client.
+    return null;
+  }
 
   return (
     <Sonner

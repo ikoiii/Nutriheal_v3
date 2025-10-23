@@ -1,156 +1,188 @@
-# Nutriheal v2
+# NutriHeal v2
 
-## Deskripsi Proyek
-
-Nutriheal v2 adalah aplikasi web inovatif yang dirancang untuk membantu pengguna memahami rekam medis mereka dengan lebih baik dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan Google Gemini, aplikasi ini mampu mengekstrak informasi kunci dari dokumen PDF rekam medis, menganalisisnya, dan menyajikan ringkasan yang mudah dipahami, serta saran makanan yang disesuaikan dengan kondisi kesehatan pengguna.
+NutriHeal v2 adalah aplikasi web inovatif yang dirancang untuk membantu Anda memahami rekam medis dan menerima rekomendasi gizi yang dipersonalisasi. Dengan memanfaatkan kecerdasan buatan (AI), aplikasi ini mampu menganalisis dokumen PDF rekam medis, menyajikan ringkasan yang mudah dipahami, serta memberikan saran praktis untuk kesehatan Anda.
 
 ## Fitur Utama
 
--   **Analisis Rekam Medis Berbasis AI**: Unggah file PDF rekam medis Anda dan biarkan Gemini AI menganalisisnya untuk mengekstrak data penting.
--   **Ringkasan Diagnosis & Metrik Kunci**: Dapatkan ringkasan diagnosis, identitas pasien, metrik medis utama (seperti tekanan darah, kolesterol, gula darah), dan daftar obat yang tercatat.
--   **Rekomendasi Gizi Personal**: Terima saran makanan yang disesuaikan untuk sarapan, makan siang, makan malam, dan camilan, berdasarkan kondisi medis yang terdeteksi.
--   **Rekomendasi Umum**: Dapatkan saran kesehatan umum yang relevan dengan hasil analisis Anda.
--   **Riwayat Analisis**: Lihat kembali riwayat analisis rekam medis Anda yang tersimpan.
--   **Autentikasi Pengguna**: Sistem login dan pendaftaran untuk mengelola data pengguna dengan aman.
--   **Antarmuka Pengguna Intuitif**: Desain responsif dan mudah digunakan yang dibangun dengan React dan shadcn/ui.
+-   **Analisis Rekam Medis Berbasis AI**: Unggah file PDF rekam medis Anda dan biarkan sistem AI menganalisisnya untuk mengekstrak data penting.
+-   **Ringkasan Kesehatan**: Dapatkan ringkasan diagnosis, metrik medis utama (tekanan darah, kolesterol, dll.), dan daftar obat yang tercatat.
+-   **Rekomendasi Gizi Personal**: Terima saran menu harian (sarapan, makan siang, makan malam, camilan) yang disesuaikan dengan kondisi medis Anda.
+-   **Asisten Chat AI**: Ajukan pertanyaan seputar kesehatan dan dapatkan jawaban informatif berdasarkan data kesehatan terakhir Anda.
+-   **Manajemen Tujuan**: Tetapkan dan lacak tujuan kesehatan pribadi Anda, seperti "minum 8 gelas air setiap hari".
+-   **Check-in Harian**: Catat tingkat energi, stres, dan kualitas tidur Anda setiap hari untuk memantau kemajuan dan mendapatkan *streak* (rentetan) harian.
+-   **Notifikasi Push**: Dapatkan pengingat dan wawasan proaktif langsung di perangkat Anda (jika diizinkan).
+-   **Riwayat Analisis**: Lihat kembali semua riwayat analisis rekam medis Anda yang tersimpan dengan aman.
 
 ## Teknologi yang Digunakan
 
-### Frontend
+| Kategori      | Teknologi                                                                                             |
+| :------------ | :---------------------------------------------------------------------------------------------------- |
+| **Frontend**  | React, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, shadcn/ui, Recharts, Sonner      |
+| **Backend**   | Node.js, Express.js, MySQL                                                                            |
+| **AI & Data** | Google Generative AI (Gemini API), `pdfreader`                                                        |
+| **Lainnya**   | JWT (Autentikasi), `bcrypt` (Hashing), `multer` (File Upload), `web-push` (Notifikasi), Jest (Testing) |
 
--   **React**: Pustaka JavaScript untuk membangun antarmuka pengguna.
--   **TypeScript**: Superset JavaScript yang menambahkan pengetikan statis.
--   **React Router DOM**: Untuk navigasi deklaratif di aplikasi React.
--   **React Query (TanStack Query)**: Untuk manajemen data, caching, dan sinkronisasi data server-side.
--   **shadcn/ui**: Komponen UI yang dapat disesuaikan dan mudah diakses, dibangun di atas Tailwind CSS dan Radix UI.
--   **Tailwind CSS**: Kerangka kerja CSS utility-first untuk styling yang cepat.
+## Panduan Penggunaan
 
-### Backend
+### 1. Prasyarat
 
--   **Node.js**: Lingkungan runtime JavaScript.
--   **Express.js**: Kerangka kerja aplikasi web untuk Node.js.
--   **Google Generative AI (Gemini API)**: Untuk pemrosesan bahasa alami dan analisis teks dari rekam medis.
--   **PDFReader**: Pustaka untuk mengekstrak teks dari file PDF.
--   **MySQL**: Sistem manajemen basis data relasional untuk menyimpan data pengguna dan riwayat analisis.
--   **`fs` module**: Untuk operasi sistem file (misalnya, menghapus file PDF setelah diproses).
--   **`express-validator`**: Middleware untuk validasi input.
--   **`Jest`**: Framework pengujian JavaScript.
-
-## Struktur Proyek
-
-Proyek ini dibagi menjadi dua bagian utama, `client` (frontend) dan `server` (backend), dengan struktur modular untuk memisahkan kekhawatiran:
-
-### `server/`
--   `config/`: Konfigurasi database.
--   `controllers/`: Logika penanganan permintaan HTTP, berinteraksi dengan layanan.
--   `middleware/`: Middleware Express untuk autentikasi, validasi, dan penanganan kesalahan.
--   `repositories/`: Abstraksi untuk interaksi database.
--   `routes/`: Definisi rute API.
--   `services/`: Logika bisnis inti, berinteraksi dengan repositori dan utilitas eksternal (misalnya, Gemini AI).
--   `tests/`: Unit tests untuk backend.
--   `utils/`: Fungsi utilitas umum (misalnya, ekstraksi PDF).
-
-### `client/src/`
--   `components/`: Komponen UI yang dapat digunakan kembali, termasuk komponen landing page yang lebih kecil.
--   `contexts/`: Konteks React untuk manajemen state global (misalnya, autentikasi).
--   `hooks/`: Custom React Hooks untuk logika stateful yang dapat digunakan kembali (misalnya, form handling, data fetching).
--   `lib/`: Fungsi utilitas frontend.
--   `pages/`: Komponen halaman utama aplikasi.
--   `services/`: Logika untuk interaksi API dari sisi klien.
-
-## Instalasi dan Setup
-
-Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal Anda.
-
-### Prasyarat
-
+Pastikan Anda telah menginstal perangkat lunak berikut di sistem Anda:
 -   Node.js (v18 atau lebih baru)
--   npm atau Yarn
--   MySQL Server
+-   npm (biasanya terinstal bersama Node.js)
+-   Server Database MySQL
 
-### Langkah-langkah
+### 2. Instalasi
 
-1.  **Kloning Repositori:**
-    ```bash
-    git clone https://github.com/your-username/Nutriheal_v2.git
-    cd Nutriheal_v2
-    ```
+A. **Kloning Repositori**
+   Buka terminal Anda dan jalankan perintah berikut untuk mengkloning proyek ke komputer lokal Anda.
+   ```bash
+   git clone https://github.com/your-username/Nutriheal_v2.git
+   cd Nutriheal_v2
+   ```
+   *(Ganti `your-username` dengan nama pengguna GitHub Anda)*
 
-2.  **Setup Backend (Server):**
-    ```bash
-    cd server
-    npm install # atau yarn install
-    ```
-    Buat file `.env` di direktori `server` dan tambahkan variabel lingkungan berikut:
-    ```env
-    PORT=5000
-    DB_HOST=localhost
-    DB_USER=your_mysql_user
-    DB_PASSWORD=your_mysql_password
-    DB_NAME=nutriheal_db
-    GEMINI_API_KEY=your_google_gemini_api_key
-    JWT_SECRET=your_jwt_secret_key
-    ```
-    **Catatan**: Ganti `your_mysql_user`, `your_mysql_password`, `nutriheal_db`, `your_google_gemini_api_key`, dan `your_jwt_secret_key` dengan kredensial Anda.
+B. **Setup Backend (Server)**
+   Buka terminal baru, masuk ke direktori `server`, dan ikuti langkah-langkah ini.
+   ```bash
+   cd server
+   npm install
+   ```
+   Selanjutnya, buat file `.env` di dalam direktori `server` dengan menyalin dari contoh di bawah.
+   
+   **Contoh `server/.env`:**
+   ```env
+   # Server Configuration
+   PORT=5000
 
-    **Inisialisasi Database MySQL:**
-    Buat database `nutriheal_db` di MySQL Anda. Struktur tabel `medical_analyses` dan `users` akan dibuat secara otomatis atau Anda perlu membuatnya secara manual jika tidak ada skrip migrasi. Contoh skema untuk `medical_analyses`:
-    ```sql
-    CREATE TABLE medical_analyses (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT,
-        file_name VARCHAR(255) NOT NULL,
-        analysis_summary JSON NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    );
-    -- Dan tabel users jika belum ada
-    CREATE TABLE users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    ```
+   # Database Configuration
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_mysql_password
+   DB_NAME=nutriheal_db
 
-    Jalankan server:
-    ```bash
-    npm start # atau node server.js
-    ```
+   # Security
+   JWT_SECRET=kunci_rahasia_super_aman_dan_panjang
 
-    Jalankan tes (opsional):
-    ```bash
-    npm test
-    ```
-    **Catatan**: Unit tests telah ditambahkan untuk `authRepository`, `authService`, `analysisRepository`, `pdfUtils`, `geminiService`, dan `recordController` untuk memastikan keandalan backend.
+   # Gemini AI API Key
+   GEMINI_API_KEY=your_google_gemini_api_key
 
-3.  **Setup Frontend (Client):**
-    ```bash
-    cd ../client
-    npm install # atau yarn install
-    ```
-    Buat file `.env` di direktori `client` dan tambahkan variabel lingkungan berikut:
-    ```env
-    VITE_API_BASE_URL=http://localhost:5000/api
-    ```
-    Jalankan aplikasi frontend:
-    ```bash
-    npm run dev # atau yarn dev
-    ```
+   # Web Push Notifications (VAPID Keys)
+   VAPID_PUBLIC_KEY=your_vapid_public_key
+   VAPID_PRIVATE_KEY=your_vapid_private_key
+   ```
+   **Penting**: Ganti nilai placeholder (seperti `your_mysql_password`, `your_google_gemini_api_key`, dll.) dengan kredensial Anda yang sebenarnya. Anda dapat membuat kunci VAPID baru menggunakan berbagai library online.
 
-4.  **Akses Aplikasi:**
-    Buka browser Anda dan navigasikan ke `http://localhost:5173` (atau port yang digunakan oleh Vite).
+C. **Setup Frontend (Client)**
+   Buka terminal lain, masuk ke direktori `client`, dan jalankan perintah instalasi.
+   ```bash
+   cd client
+   npm install
+   ```
+   File `.env` untuk client bersifat opsional, karena secara default ia akan mencoba terhubung ke server di `http://localhost:5000`.
 
-## Penggunaan
+### 3. Inisialisasi Database
 
-1.  **Daftar/Login**: Buat akun baru atau masuk menggunakan kredensial Anda.
-2.  **Unggah PDF**: Navigasikan ke halaman unggah dan pilih file PDF rekam medis Anda.
-3.  **Lihat Hasil**: Setelah analisis selesai, Anda akan diarahkan ke halaman hasil yang menampilkan ringkasan diagnosis, metrik kunci, rekomendasi obat, dan saran gizi.
-4.  **Riwayat**: Anda dapat melihat semua analisis sebelumnya di halaman riwayat.
+Jalankan server MySQL Anda dan gunakan query SQL berikut untuk membuat database dan semua tabel yang diperlukan.
 
-## Kontribusi
+```sql
+-- Buat database jika belum ada
+CREATE DATABASE IF NOT EXISTS nutriheal_db;
 
-Kami menyambut kontribusi! Jika Anda ingin berkontribusi pada proyek ini, silakan fork repositori, buat branch baru, lakukan perubahan Anda, dan kirimkan pull request.
+-- Gunakan database
+USE nutriheal_db;
 
-**Catatan**: Pastikan untuk mengganti placeholder seperti `your-username` dan detail kredensial lainnya dengan informasi yang benar.
+-- Tabel untuk pengguna
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    age INT,
+    weight DECIMAL(5, 2),
+    height DECIMAL(5, 2),
+    daily_checkin_streak INT DEFAULT 0,
+    last_checkin_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel untuk riwayat analisis medis
+CREATE TABLE IF NOT EXISTS medical_analyses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    file_name VARCHAR(255) NOT NULL,
+    analysis_summary JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabel untuk log harian
+CREATE TABLE IF NOT EXISTS daily_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    log_date DATE NOT NULL,
+    energy_level INT NOT NULL,
+    stress_level INT NOT NULL,
+    sleep_quality INT NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY (user_id, log_date)
+);
+
+-- Tabel untuk tujuan pengguna
+CREATE TABLE IF NOT EXISTS user_goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    goal_description VARCHAR(255) NOT NULL,
+    status ENUM('active', 'completed') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabel untuk progres tujuan
+CREATE TABLE IF NOT EXISTS goal_progress (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    goal_id INT,
+    progress_date DATE NOT NULL,
+    completed BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (goal_id) REFERENCES user_goals(id) ON DELETE CASCADE
+);
+
+-- Tabel untuk langganan notifikasi push
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    endpoint TEXT NOT NULL,
+    p256dh_key VARCHAR(255) NOT NULL,
+    auth_key VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+### 4. Menjalankan Aplikasi
+
+Anda perlu menjalankan server backend dan client frontend secara bersamaan di dua terminal terpisah.
+
+A. **Jalankan Backend**
+   Di dalam direktori `server/`:
+   ```bash
+   npm run dev
+   ```
+   Server akan berjalan di `http://localhost:5000`.
+
+B. **Jalankan Frontend**
+   Di dalam direktori `client/`:
+   ```bash
+   npm run dev
+   ```
+   Aplikasi React akan berjalan dan dapat diakses di `http://localhost:5173` (atau port lain yang ditampilkan di terminal).
+
+### 5. Menjalankan Tes (Opsional)
+
+Untuk memastikan semua fungsi backend berjalan dengan baik, jalankan unit tests.
+Di dalam direktori `server/`:
+```bash
+npm test
+```

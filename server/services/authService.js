@@ -1,6 +1,6 @@
+const { findUserByEmail, createUser, getUserById } = require('../repositories/authRepository');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { findUserByEmail, createUser } = require('../repositories/authRepository');
 
 // Custom Error Class for better error handling
 class AuthError extends Error {
@@ -48,8 +48,19 @@ async function login(email, password) {
   return { message: 'Login berhasil!', token: token };
 }
 
+async function getUserProfile(userId) {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new AuthError('Pengguna tidak ditemukan.', 404);
+  }
+  // Exclude sensitive information like password
+  const { password, ...userProfile } = user;
+  return userProfile;
+}
+
 module.exports = {
   register,
   login,
+  getUserProfile,
   AuthError, // Export AuthError so controllers can catch it specifically if needed
 };

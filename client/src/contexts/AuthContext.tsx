@@ -3,12 +3,21 @@ import axios from "axios";
 import { authService } from "@/services/authService";
 import { useClientErrorHandler } from "@/hooks/useClientErrorHandler";
 
+import { jwtDecode } from "jwt-decode";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   token: string | null;
+  user: User | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem("token");
   });
+  const [user, setUser] = useState<User | null>(null);
 
   const { handleError } = useClientErrorHandler();
 
@@ -36,9 +46,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       localStorage.setItem("token", token);
       setIsAuthenticated(true);
+      try {
+        const decodedUser = jwtDecode<User>(token);
+        setUser(decodedUser);
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        setUser(null);
+        setToken(null); // Invalidate token if decoding fails
+      }
     } else {
       localStorage.removeItem("token");
       setIsAuthenticated(false);
+      setUser(null);
     }
   }, [token]);
 
@@ -94,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token, logout, handleError]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, signup, logout, token }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, signup, logout, token, user }}>
       {children}
     </AuthContext.Provider>
   );

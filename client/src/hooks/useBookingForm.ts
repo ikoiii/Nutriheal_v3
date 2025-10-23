@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 
 const doctors = [
   {
@@ -19,21 +19,31 @@ const doctors = [
   },
 ];
 
-const timeSlots = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
+// Fungsi untuk menghasilkan slot waktu yang "dinamis"
+const generateTimeSlots = () => {
+  const allSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"];
+  // Acak dan ambil sebagian slot untuk simulasi ketersediaan
+  return allSlots.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 3);
+};
 
 export function useBookingForm() {
   const [selectedDoctor, setSelectedDoctor] = useState<(typeof doctors)[0] | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [problemDescription, setProblemDescription] = useState("");
   const [isBooking, setIsBooking] = useState(false);
-  const { toast } = useToast();
+
+  useEffect(() => {
+    if (selectedDate) {
+      setTimeSlots(generateTimeSlots());
+      setSelectedTime(""); // Reset waktu saat tanggal berubah
+    }
+  }, [selectedDate]);
 
   const handleBooking = useCallback(() => {
     if (!selectedDoctor || !selectedDate || !selectedTime) {
-      toast({
-        variant: "destructive",
-        title: "Pemesanan Gagal",
+      toast.error("Pemesanan Gagal", {
         description: "Harap pilih dokter, tanggal, dan waktu terlebih dahulu.",
       });
       return;
@@ -41,9 +51,8 @@ export function useBookingForm() {
     setIsBooking(true);
     // Simulasi panggilan API
     setTimeout(() => {
-      toast({
-        title: "Pemesanan Berhasil!",
-        description: `Anda telah berhasil memesan konsultasi dengan ${selectedDoctor.name} pada ${new Intl.DateTimeFormat('id-ID', { dateStyle: 'full' }).format(selectedDate)} jam ${selectedTime}.`,
+      toast.success("Pemesanan Berhasil!", {
+        description: `Anda akan menerima konfirmasi untuk konsultasi dengan ${selectedDoctor.name} pada ${new Intl.DateTimeFormat('id-ID', { dateStyle: 'full' }).format(selectedDate)} jam ${selectedTime}.`,
       });
       setSelectedDoctor(null);
       setSelectedDate(new Date());
@@ -51,7 +60,7 @@ export function useBookingForm() {
       setProblemDescription("");
       setIsBooking(false);
     }, 1500);
-  }, [selectedDoctor, selectedDate, selectedTime, toast]);
+  }, [selectedDoctor, selectedDate, selectedTime]);
 
   return {
     doctors,

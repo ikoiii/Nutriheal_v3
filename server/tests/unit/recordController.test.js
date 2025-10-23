@@ -92,6 +92,10 @@ describe('recordController', () => {
     });
 
     it('should handle invalid JSON response from Gemini', async () => {
+      // ----- 👇 SAYA MENAMBAHKAN KODE INI UNTUK MEMBUNGKAM LOG -----
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      // -----------------------------------------------------------
+
       const mockPdfText = 'Extracted PDF text';
       const mockGeminiResponse = 'This is not JSON';
       const expectedFallbackResult = {
@@ -114,6 +118,10 @@ describe('recordController', () => {
       expect(cleanupFile).toHaveBeenCalledWith(mockReq.file.path);
       expect(mockExit).not.toHaveBeenCalled();
       expect(mockNext).not.toHaveBeenCalled();
+
+      // ----- 👇 SAYA JUGA MENAMBAHKAN INI UNTUK MENGEMBALIKAN FUNGSI -----
+      consoleErrorSpy.mockRestore();
+      // ---------------------------------------------------------------
     });
 
     it('should call next with error if PDF extraction fails', async () => {
