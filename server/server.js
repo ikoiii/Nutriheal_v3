@@ -15,7 +15,18 @@ const errorHandler = require('./middleware/errorHandler'); // Import the error h
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const whitelist = [process.env.CLIENT_URL, 'http://localhost:3000', 'https://nutriheal-v3.vercel.app/'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
